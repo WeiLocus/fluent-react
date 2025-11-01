@@ -1651,6 +1651,20 @@ function LikeButton() {
 
 ---
 
+# 章節重點回顧 — Takeaway
+
+1. 伺服器組件（RSCs）把資料抓取與渲染移到伺服器：能減少前端 bundle 體積，並在首次載入就回傳已渲染的 HTML，提升效能與首次可見內容（TTFB/CLS）。
+
+2. 嚴格區分 Server vs Client：有互動性的邏輯（如 useState、onClick、DOM 操作）必須放在客戶端組件（`"use client"`）；伺服器組件只處理可序列化的資料與靜態輸出。
+
+3. 序列化與模組參考是關鍵：伺服器會把 React 元素樹序列化送到客戶端（replacer/parse 還原 $$typeof），對於 client component 以模組參考作為佔位，客戶端再載入對應 bundle 注入互動部分。
+
+4. 軟導航（Soft Navigation）可降低全頁重載：攔截連結並只請求 JSX/元素樹，反序列化後用 root.render 更新畫面，保留應用狀態且更流暢。
+
+5. Server Actions 與安全性：使用 `'use server'` 的伺服器函式讓客戶端能直接觸發伺服器邏輯（表單/資料修改），同時保持敏感資源在伺服器端，減少 client bundle 並利於漸進增強。
+
+---
+
 # 複習問題
 
 <v-clicks>
