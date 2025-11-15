@@ -29,12 +29,19 @@ fonts:
 
 深入了解 RSCs 的運作原理與優勢
 
+<div class="abs-br m-6 flex items-center">
+  <div class="text-sm">2025-12-02</div>
+  <a href="https://github.com/WeiLocus" target="_blank" class="slidev-icon-btn">
+    <carbon:logo-github />
+  </a>
+</div>
+
 ---
 
 # 什麼是 React Server Components（RSCs)？
 
 
-<div class="mt-8 p-4 bg-blue-500 bg-opacity-10 rounded">
+<div class="my-8 p-4 bg-blue-500 bg-opacity-10 rounded">
 💡 RSCs 引入一種在<strong>伺服器上運行</strong>的新型組件
 </div>
 
@@ -42,8 +49,7 @@ fonts:
 - Next.js 已全面支持 RSCs
 - 在 React 19 是穩定的，但建議釘選到特定的 React 版本
 
-<div class="absolute bottom-2 left-16 flex items-center">
-  <span class="inline-block">參考：</span>
+<div class="absolute bottom-3 right-3 flex gap-4">
   <a
     href="https://react.dev/reference/rsc/server-components"
     target="_blank"
@@ -212,9 +218,9 @@ const Component = () => <div>hi!</div>
 
 1. 只在伺服器執行，伺服器是我們可以掌控計算能力的機器，效能更容易預測。
 2. 在安全的伺服器環境中執行，不必擔心權杖或其他安全資訊外流。
-3. 伺服器組件可以是非同步的，可以等待他們在伺服器上完成執行，再透過網路與用戶端分享它們
-  -  Server Component 能寫 async/await，React 會自動幫你「暫停等待」非同步資料。
-  -  運用 Suspense + Promise，可以邊抓資料邊顯示部分內容，其他慢慢載入。
+3. 伺服器組件可以是非同步的，可以等待它們在伺服器上完成執行，再透過網路與用戶端分享它們
+   -  Server Component 能寫 async/await，React 會自動幫你「暫停等待」非同步資料。
+   -  運用 Suspense + Promise，可以邊抓資料邊顯示部分內容，其他慢慢載入。
 
 </div>
 <div>
@@ -253,22 +259,6 @@ async function Page({ id }) {
 
 ---
 
-# Client component VS. Server component
-
-<div class="text-[16px]">
-
-| 功能項目    | Client Components <br/> (`"use client"`)  | Server Components                             |
-| ---------- | ----------------------- |------------------------------------------- |
-| State / Hooks     | ✅              | ❌           |
-| Props             | ✅              | ✅ （但傳給 Client Components 時必須可序列化，不能是 functions 或 classes） |
-| Data fetching     | 建議搭配資料抓取函式庫 React Query    | ✅ 推薦使用，可在 component 內使用 `async/await`                        |
-| Can import       | 只能匯入 **Client Components**（無法往回引入 Server Components） | 可以匯入 **Client** 和 **Server Components**                      |                   |
-| **When re-render?**  | 當 **state 改變** 時重新渲染    | 當 **URL 改變（navigation）** 時重新渲染         |
-
-</div>
-
----
-
 # 伺服器組件和伺服器算繪之間的互動
 
 <div class="mt-6" />
@@ -292,7 +282,7 @@ RSCs renderer :
 </div>
 ```
 
-用戶端組件會透過 'use client' 標記，RSCs 渲染器會停止深入，並在元素樹中留下一個佔位符 (Placeholder) 和對應的模組參考
+用戶端組件會透過 'use client' 標記，RSCs renderer 會停止深入，並在元素樹中留下一個佔位符 (Placeholder) 和對應的模組參考
 
 </div>
 <div>
@@ -332,11 +322,22 @@ RSCs renderer :
 <div class="mt-8" />
 <div>
 
-伺服器算繪器 將這棵 React 元素樹「轉換成可以用網路串流傳到用戶端的標記」，將 React 元素 轉換成 HTML 串流
+伺服器算繪器 將這棵 React 元素樹「轉換成可以用網路串流傳到用戶端的標記」
 
 細節步驟是：
 - 在伺服器上，這棵元素樹被進一步序列化為字串 或 串流
-- 將序列化的結果，一個字串化的大 JSON 物件，稱為RSC Payload (一種精簡的二進制格式）將它發送到用戶端
+  - <kbd>renderToString</kbd> 把 React 元素樹渲染成整個 HTML 字串
+  - <kbd>renderToPipeableStream</kbd> 把 React 元素樹轉換成 Node.js 串流
+- 將序列化的結果，一個字串化的大 JSON 物件，稱為 RSC Payload(一種精簡的二進制格式)，將它發送到用戶端 
+
+<div class="text-[16px] px-6">
+<a href="https://vercel.com/guides/how-to-optimize-rsc-payload-size#what-is-in-the-rsc-payload">RSC payload</a> 包含：
+  <li>伺服器組件的渲染結果</li>
+  <li>需要在瀏覽器端運行的 Client Component，Payload 只放一個「位置標記」和它的 JavaScript 檔案參考</li>
+  <li>Server Component 要傳給 Client Component 的 props（資料)</li>
+</div> 
+
+
 - 用戶端的 React 讀取這個解析後的 JSON ，像平常一樣算繪它
 
 </div>
@@ -401,7 +402,7 @@ app.listen(3000, () => {
 ---
 
 # turnServerComponentsIntoTreeOfElements 底層
-
+`const rscTree = await turnServerComponentsIntoTreeOfElements(<App />);`
 
 核心邏輯是一個大型的遞迴 if/else 判斷樹，它根據輸入的 jsx（即 JSX 節點或組件）類型來決定下一步的操作。
 
@@ -415,7 +416,7 @@ jsx 的類型可能是
 
 ### turnServerComponentsIntoTreeOfElements 程式碼
 
-```js {1|2-5|7-9|10-23}
+```js {1|2-5|7-9|10-23|12-18|19-21}
 async function turnServerComponentsIntoTreeOfElements(jsx) {
   if (
     typeof jsx === "string" || typeof jsx === "number" || typeof jsx === "boolean" || jsx == null
@@ -566,7 +567,7 @@ if (jsx.$$typeof === Symbol.for("react.element")) {
 </div>
 
 <div class="my-8 p-4 bg-blue-500 bg-opacity-10 rounded">
-💡 把函式執行後的結果傳給 renderToString 或 renderToPipeableStream，將它<span v-mark.underline.orange>序列化</span>直接發送到瀏覽器，用戶端的 React 就能渲染它。
+💡 把函式執行後的結果作為參數，傳給 renderToString 或 renderToPipeableStream，將它<span v-mark.underline.orange>序列化</span>直接發送到瀏覽器，用戶端的 React 就能渲染它。
 </div>
 
 ---
@@ -576,7 +577,7 @@ if (jsx.$$typeof === Symbol.for("react.element")) {
 <div class="mt-8">
 
 <div class="my-8 p-4 bg-blue-500 bg-opacity-10 rounded">
-💡 將 React 元素轉換成字串的過程
+💡 伺服器端渲染流程中，將 React 元素轉換成字串的過程
 </div>
 
 <div class="mt-8" />
@@ -624,7 +625,7 @@ const htmlString = ReactDOMServer.renderToString(element)
 2. 為每個元素生成相應的 HTML
 3. 全部串接在一起
 
-預期結:拿到 HTML 字串
+預期結果: 拿到 HTML 字串
 
 htmlString 會是 `<h1>Hello world</h1>`
 
@@ -633,12 +634,12 @@ htmlString 會是 `<h1>Hello world</h1>`
 <div>
 
 這個 HTML 字串可以:
-- 發送到客戶端
+- 發送到用戶端
 - 作為網頁的初始標記
 
 <v-clicks>
 
-客戶端載入流程
+用戶端載入流程
 
 1. 接收 HTML 字串作為初始標記
 2. 載入 JavaScript bundle
@@ -653,19 +654,18 @@ htmlString 會是 `<h1>Hello world</h1>`
 ---
 
 # 序列化的目的
+序列化確保伺服器端與用戶端結構完全匹配
 
-<div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded mt-4">
+<div class="px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 rounded mt-4">
 
-**一致性**
+1. <span v-mark.underline.orange>因`$$typeof` 屬性無法被序列化</span>，RSC 架構使用了一個特殊的序列化過程，將不可傳輸的 Symbol 值替換成可傳輸的字串表示（例如將 `$$typeof` 的 Symbol 值替換為 "react.element" 字串）
+2. <span v-mark.underline.orange>比對靜態 HTML 的 DOM 元素結構 (伺服器端) 與 React 組件透過 jsx 來定義的結構 (用戶端)是否相符</span>，若相符，即可產生一致且可預測的初始算繪，確保了初始載入期間的正確性與效率
 
-1. 將 React 元素序列化為靜態 HTML 字串，在伺服器端和客戶端看起來都一樣，可產生一致且可預測的初始算繪
-，確保了初始載入期間的正確性與效率
-
-2. React 才能正確進行調和 (reconcile) 和 比較 (diff )
+React 才能正確進行調和 (reconcile) 和 比較 (diff )
 
 </div>
 
-<div class="grid grid-cols-2 gap-8 mt-6">
+<div class="grid grid-cols-2 gap-8 mt-4">
 
 <div class="px-6 py-3 rounded-2xl border-2 border-green-400 bg-green-50 dark:bg-green-900/20">
   <h3 class="text-xl font-bold text-green-600 mb-3 flex items-center gap-2">
@@ -674,7 +674,7 @@ htmlString 會是 `<h1>Hello world</h1>`
   <ul>
     <li>流暢的使用者體驗</li>
     <li>正確且高效的渲染</li>
-    <li>事件處理器正確附加</li>
+    <li>事件監聽器正確附加</li>
     <li>無視覺閃爍</li>
   </ul>
 </div>
@@ -686,7 +686,7 @@ htmlString 會是 `<h1>Hello world</h1>`
   <ul>
     <li>渲染結果閃爍</li>
     <li>版面錯位</li>
-    <li>事件處理器失效</li>
+    <li>事件監聽器失效</li>
   </ul>
 </div>
 
@@ -694,37 +694,7 @@ htmlString 會是 `<h1>Hello world</h1>`
 
 ---
 
-# 調和
-
-<div class="mt-6" />
-
-**一般說的 調和**
-- 目標: 確保 UI 與應用程式狀態保持一致
-- 場景: 狀態更新後的 Diff 比較
-
-**伺服器端算繪 情境下的 調和**
-- 目標: 實現 Hydration
-- 協調伺服器生成的**靜態 DOM** 與客戶端預期的**虛擬 DOM**
-
-
-✅ 匹配成功：React 不需要重繪 DOM，只需附加事件監聽器
-- 高效能、無閃爍
-
-❌ 匹配失敗：無法對應 React 元素與 DOM 元素，無法正確附加事件監聽器
-- 應用程式行為不符預期
-- 可能需要完全重新渲染
-
----
-layout: center
----
-
-# 序列化的核心挑戰
-
-<div class="bg-red-50 dark:bg-red-900/20 p-4 rounded mt-6">$$typeof 屬性無法被序列化 並透過網路發送</div>
-
----
-
-# 解決方案: Replacer 函數
+# 序列化 `$$typeof` 解決方案: Replacer 函數
 
 <div class="mt-8" />
 
@@ -777,7 +747,7 @@ JSON.stringify(jsxTree, (key, value) => {
 
 <div class="mt-8" />
 
-客戶端:將字串還原為 Symbol
+用戶端:將字串還原為 Symbol
 
 ```js {all|2-4|5}
 JSON.parse(serializedJsxTree, (key, value) => {
@@ -799,36 +769,29 @@ JSON.parse(serializedJsxTree, (key, value) => {
 
 ---
 
-# 如何實現 Navigation
+# RSCs 如何實現 Navigation
+讓狀態在路由轉換之間保持存在
 
 <div class="mt-8" />
 
-傳統做法: 按下連結後,網頁會重新刷新
+❌ 不好的使用者體驗: 按下連結後，網頁會重新載入
 
-在伺服器組件裡的 app 裡有一個連結：
+在伺服器組件裡的 app 裡有一個連結：`<a href="/blog">Blog</a>`
 
-```js
-<a href="/blog">Blog</a>
-```
 
-<v-click>
-❌ 不好的使用者體驗
-</v-click>
+<div class="my-8 p-4 bg-blue-500 bg-opacity-10 rounded">
+💡 使用 RSCs 實現軟導航 (Soft Navigation)
 
----
-
-# 使用 RSCs 實現軟導航 (Soft Navigation)
-
-<div class="mt-8" />
-
-## 核心概念
+<div class="pl-4">
 
 - 不重新載入整個頁面
 - 改為只向伺服器請求「對應頁面的 React 元素樹資料」
-- 用戶端根據新的元素樹重新渲染畫面
+- 用戶端根據新的元素樹，產生更新後的 React Element Tree，並局部更新畫面
 
+</div>
+</div>
 
-點擊連結時，向伺服器發送目的 URL，伺服器會將該網頁的 JSX 樹 送回來給我們，在瀏覽器內的 React 使用新 JSX 樹來重新算繪整個網頁，讓我們得到一個新網頁，而不需要重新整理整個網頁。
+使用者點擊連結時，向伺服器傳送目標 URL，伺服器會將該網頁的 JSX 樹 送回來給我們，在瀏覽器內的 React 使用新 JSX 樹來重新算繪整個網頁，讓我們得到一個新網頁，而不需要重新載入整個網頁。
 
 ---
 
@@ -836,7 +799,7 @@ JSON.parse(serializedJsxTree, (key, value) => {
 
 <div />
 
-阻止連結的預設行為，呼叫 navigate 函式
+在連結加上事件監聽器，阻止連結的預設行為，呼叫 navigate 函式
 ```js
 window.addEventListener("click", (event) => {
   if (event.target.tagName !== "A") {
@@ -862,7 +825,7 @@ window.addEventListener("click", (event) => {
 <div>
 
 **1. 向伺服器發送請求**
-- 透過特定標頭 「"jsx-only": true」 告訴伺服器，客戶端需要的是新的 React 元素樹，不是完整 HTML
+- 透過特定標頭 <code>"jsx-only": true</code> 告訴伺服器，客戶端需要的是新的 React 元素樹，不是完整 HTML
 
 **2. 反序列化階段**
 - 客戶端將 jsxTree 反序列化為 React 元素
@@ -900,8 +863,8 @@ async function navigate(url) {
 ---
 
 # 伺服器端處理請求
+序列化 React 元素樹
 
-### 序列化 React 元素樹
 透過 `turnServerComponentsIntoTreeOfElements(<App />)` 的過程，將應用程式的根元件 `<App />` 轉換為一個 JSX 樹物件。
 這個樹物件是 React 元素的結構化表示，代表了該頁面所需的 UI 狀態，接著序列化，傳送給客戶端。
 
@@ -914,7 +877,7 @@ app.get("*", async (req, res) => {
     res.end(
       JSON.stringify(jsxTree, (key, value) => {
         if (key === "$$typeof") {
-            return "react.element";
+          return "react.element";
         }
         return value;
       })
@@ -939,7 +902,8 @@ const root = hydrateRoot(document,<App /> );
 ```
 
 從 React 取得 一個 Root
-- 客戶端使用 `hydrateRoot(document, <App />)`，將伺服器傳來的 HTML 與 React 綁定
+- 客戶端使用 `hydrateRoot(document, <App />)`，讓伺服器產生的 HTML 具有互動性
+  - `hydrateRoot`以參數來接收 React 根組件和 DOM 容器
 
 **後續軟導航時**:
 
@@ -1006,12 +970,11 @@ root.render(element)
 ---
 
 # RSCs 需要留意的限制
-
 並非所有組件都可以成為伺服器組件
 
-## 無法成為伺服器組件: 有些功能需要有互動性
+當功能需要有互動性，就無法寫成伺服器組件
 
-Counter 記數器組件，使用 `useState` 更新狀態 count 狀態，需要靠使用者點擊
+例如：Counter 記數器組件，使用 `useState` 更新狀態 count 狀態，需要靠使用者點擊
 ```js
 function Counter() {
   const [count, setCount] = useState(0);
@@ -1028,38 +991,39 @@ function Counter() {
 
 ---
 
-# 伺服器組件限制: useState
+# 伺服器組件限制：useState & onClick
 
-<div class="mt-6"/>
+<div class="grid grid-cols-2 gap-10 mt-4">
+
+<div>
+
+useState
 
 ```js
 const [count, setCount] = useState(0);
 ```
 
-**為什麼不能用?**
+- useState 是 純用戶端 API，伺服器不知道 count 的初始值
+- 無法在伺服器渲染出正確的初始 HTML
+- 伺服器端 state 是 多用戶端共享的
+- 但 count 應該是 單一使用者本地的狀態
+風險：可能導致 多用戶端之間的狀態洩漏
+</div>
 
-- useState 是只能在用戶端使用的 API，伺服器不會知道 `count` 的初始值
-- 無法渲染初始的 HTML
-- 伺服器端的狀態是**多個用戶端共享的**
-- `count` 的狀態是**當下 app 本地的**
+<div>
 
-**風險**: 這種差異有危險性,可能導致狀態在多個用戶端之間洩漏
-
----
-
-# 伺服器組件限制: onClick
-
-<div class="mt-6"/>
+onClick
 
 ```js
-<button onClick={() => setCount(count + 1)}>+
+<button onClick={() => setCount(count + 1)}> + </button>
 ```
 
-**為什麼不能用?**
+- 伺服器 沒有互動性
+- onClick 的函式 無法被序列化
+- 伺服器無法把函式 傳送到瀏覽器執行
 
-- 伺服器沒有互動性
-- **函式本身無法序列化**
-- 伺服器無法序列化並傳給客戶端
+</div>
+</div>
 
 ---
 
@@ -1149,8 +1113,6 @@ $$typeof: Symbol.for("react.module.reference")
 ---
 
 # 伺服器渲染的組件樹結構
-
-<div />
 伺服器會為用戶端組件建立一個模組參考
 
 <!-- ![module reference](/module-reference.png) -->
@@ -1181,17 +1143,21 @@ $$typeof: Symbol.for("react.module.reference")
 
 <h3 class="my-4">伺服器組件的限制</h3>
 
-- 不能使用 `useState`等具有互動性的 React Hooks
-- 與生命週期有關的邏輯，例如 `useEffect` 
-- 不能使用事件處理器，例如 `onClick`、 `onChange`
-- 不能使用 Browser-only API，例如`localStorage`、 `window` 和 `Navigator.geolocation`
+<div class="pl-4 space-y-2">
+  <div>❌ 具有互動性的 React Hooks，例如 <code>useState</code></div>
+  <div>❌ 與生命週期有關的邏輯，例如 <code>useEffect</code></div>
+  <div>❌ 用事件處理器，例如 <code>onClick</code>、 <code>onChange</code></div>
+  <div>❌ 用 Browser-only API，例如<code>localStorage</code>、 <code>window</code> 和 <code>Navigator.geolocation</code></div>
+</div>
 
 <h3 class="my-4">解決策略</h3>
+<div class="pl-4">
 
-- 使用 `"use client"` 指令標記客戶端組件
-- 清楚拆分伺服器與客戶端邏輯
-- 利用模組參考機制連接兩者
+  - 使用 `"use client"` 指令標記客戶端組件
+  - 清楚拆分伺服器與客戶端邏輯
+  - 利用模組參考機制連接兩者
 
+</div>
 ---
 
 # 釐清常見的誤解
@@ -1210,13 +1176,29 @@ $$typeof: Symbol.for("react.module.reference")
 
 ---
 
+# RSCs - Client Component 和 Server Component 的差別
+
+<div class="text-[16px]">
+
+| 功能項目    | Client Components <br/> (`"use client"`)  | Server Components                             |
+| ---------- | ----------------------- |------------------------------------------- |
+| State / Hooks     | ✅              | ❌           |
+| Props             | ✅              | ✅ （但傳給 Client Components 時必須可序列化，不能是 functions 或 classes） |
+| Data fetching     | 建議搭配資料抓取函式庫 React Query    | ✅ 推薦使用，可在 component 內使用 `async/await`                        |
+| Can import       | 只能匯入 **Client Components**（無法往回引入 Server Components） | 可以匯入 **Client** 和 **Server Components**                      |                   |
+| **When re-render?**  | 當 **state 改變** 時重新渲染    | 當 **URL 改變（navigation）** 時重新渲染         |
+
+</div>
+
+---
+
 # 處理伺服器組件的規則
 
 <div class="grid grid-cols-2 gap-4 mt-6 light:text-black">
 
 <div class="p-4 rounded-xl bg-blue-100 dark:bg-blue-900/20">
   <h3 class="font-bold text-lg">序列化至上</h3>
-  <p>所有 props 都必須可序列化，不能傳函式或非純量。</p>
+  <p>所有 props 都必須可序列化，不能是函式或其他不可序列化的值。</p>
 </div>
 
 <div class="p-4 rounded-xl bg-blue-100 dark:bg-blue-900/20">
@@ -1335,7 +1317,7 @@ export async function ServerComponent() {
 
 <div />
 
- ✅ 正確做法:
+✅ 正確做法:
 - Bundler 只關注 `import` 陳述句
 - 由伺服器組件作為父層，將伺服器子組件透過 **props 或 children** 傳入用戶端組件。
 
@@ -1380,10 +1362,7 @@ async function TheParentOfBothComponents() {
 ---
 
 # 伺服器操作 (Server Actions)
-
-<div />
-
-React Server Components 搭配 `'use server'`，讓用戶端可以呼叫伺服器端函式，我們稱為 伺服器操作
+React Server Components 搭配 `'use server'`，讓用戶端可以呼叫伺服器端函式，我們稱為「伺服器操作」
 
 兩種寫法來定義伺服器操作
 1. 將 `'use server'` 指令放在檔案最上方
@@ -1392,14 +1371,17 @@ React Server Components 搭配 `'use server'`，讓用戶端可以呼叫伺服�
    - 因為網路請求通常是非同步的，`'use server'` 只能在`async function`中使用
    - 想在同一檔案中混合 server 與 client 代碼時使用
 
-注意：
-主要設計用於「修改」伺服器端的狀態，例如處理表單提交
-不建議將 Server Function 用於資料獲取 (data fetching)，因為它無法快取回傳值
+
+<div class="mt-6 p-4 rounded-xl bg-yellow-200 dark:bg-yellow-900/40">
+  <div>主要設計用於「修改」伺服器端的狀態，例如處理表單提交。</div>
+  <div>不建議將 Server Function 用於資料獲取 (data fetching)，因為它無法快取回傳值</div>
+</div>
 
 ---
 
 # 伺服器操作 — 範例
 <div />
+
 寫法1: 將 `"use server"` 指令放在檔案最上方，將檔案中的所有匯出都標記為可在任何地方使用的伺服器操作，包括在客戶端程式碼中匯入
 ```js
 "use server";
@@ -1433,12 +1415,11 @@ export default App() {
 - 用來更新伺服器端的狀態
 
 
-## 常見誤解
-<div class="bg-red-50 dark:bg-red-900/20 p-4 rounded my-6">❌ Server Components 是透過 'use server' 來表示，但 'use server' 指令是用於 伺服器函式
+常見誤解
+<div class="bg-red-50 dark:bg-red-900/20 p-4 rounded">❌ Server Components 是透過 'use server' 來表示，但 'use server' 指令是用於 伺服器函式
 </div>
 
-<div class="absolute bottom-2 left-16 flex items-center">
-  <span class="inline-block">參考：</span>
+<div class="absolute bottom-3 right-3">
   <a
     href="https://react.dev/reference/rsc/use-server#"
     target="_blank"
@@ -1567,15 +1548,14 @@ React 會攔截表單的提交；
 </div>
 <div>
 
-```js {6|9-14|18-20}
+```js {all|6|9-14|18-20}
 "use client";
 import incrementLike from "./actions";
 import { useState, useTransition } from "react";
 
 function LikeButton() {
   const [isPending, startTransition] = useTransition();
-  const [likeCount, setLikeCount] = useState(0);
-    
+  const [likeCount, setLikeCount] = useState(0);   
   const onClick = () => {
     startTransition(async () => {
       const currentCount = await incrementLike();
@@ -1635,7 +1615,7 @@ function LikeButton() {
 
 ---
 
-# CSR vs Server Actions 比較表
+# CSR VS. Server Actions 比較表
 
 <div class="text-[16px]">
 
@@ -1648,6 +1628,12 @@ function LikeButton() {
 | 表單邏輯、錯誤處理、驗證等皆須打包進前端 bundle | Server Function 端邏輯不會傳至前端,實現零額外 bundle 成本 | 明顯減少下載體積、提升初始載入速度 |
 
 </div>
+
+---
+
+# SSR 和 RSC 之間的關係
+
+RSC 沒有取代 SSR，而是補充了SSR，需要透過框架來整合
 
 ---
 
