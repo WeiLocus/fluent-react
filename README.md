@@ -61,7 +61,7 @@
     </td>
     <td>Ashley</td>
     <td>Lois</td>
-    <td>Slide</td>
+    <td><a href="https://fluent-react-ch5.vercel.app">Slide</a></td>
     <td>Note</td>
   </tr>
   <tr>
@@ -71,11 +71,11 @@
     </td>
     <td>Yo0</td>
     <td>wei</td>
-    <td>Slide</td>
+    <td><a href="https://fluent-react-ch6.vercel.app">Slide</a></td>
     <td>Note</td>
   </tr>
   <tr>
-    <td>2025/11/11</td>
+    <td>2025/11/18</td>
     <td>
       第 7 章 並行React
     </td>
@@ -85,7 +85,7 @@
     <td>Note</td>
   </tr>
   <tr>
-    <td>2025/11/18</td>
+    <td>2025/11/15</td>
     <td>
       第 8 章 框架
     </td>
@@ -95,7 +95,7 @@
     <td>Note</td>
   </tr>
   <tr>
-    <td>2025/11/25</td>
+    <td>2025/12/2</td>
     <td>
       第 9 章 React Server Components<br/>
       第 10 章 React替代方案<br/>
