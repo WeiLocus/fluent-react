@@ -1615,7 +1615,7 @@ function LikeButton() {
 
 ---
 
-# CSR VS. Server Actions 比較表
+# 表單操作: CSR VS. Server Actions 比較表
 
 <div class="text-[16px]">
 
@@ -1633,7 +1633,18 @@ function LikeButton() {
 
 # SSR 和 RSC 之間的關係
 
-RSC 沒有取代 SSR，而是補充了SSR，需要透過框架來整合
+RSC 沒有取代 SSR，而是補充了SSR，需要透過框架來整合，例如 Next.js
+
+<div class="text-[16px]">
+
+|  | server-side rendering | React Server Components |
+|---------|----------------|----------|
+| 組件 | 都是 client component | 預設是 server component，需要 Hooks、狀態 (State) 或 瀏覽器 API 的組件要用 'use client ' 標記成用戶端組件 |
+| 序列化產物 | 將所有組件渲染成靜態 HTML 字串 (或串流)，用於首頁快速預覽 | 產生 RSC payload |
+| 程式碼傳輸 | 所有組件的 JS Bundle 都會傳輸到用戶端 | 伺服器端組件的原始碼不會再傳到用戶端，RSC payload 包含了已渲染的 SC 結構結果、以及用戶端組件的模組參考作為 Placeholder |
+| 水合 | 所有組件的程式碼都必須在客戶端下載並再次執行，以附加事件監聽器並恢復互動性 | 只有用戶端組件的程式碼會被下載，進行水合以實現互動性 |
+
+</div>
 
 ---
 
