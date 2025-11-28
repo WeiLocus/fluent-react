@@ -38,6 +38,36 @@ fonts:
 
 ---
 
+# 本章大綱
+
+<div class="p-4 rounded-2xl border my-6">
+  Part 1: React Server Components
+</div>
+<div class="p-4 rounded-2xl border mb-6">
+  Part 2: 序列化
+</div>
+<div class="p-4 rounded-2xl border mb-6">
+  Part 3: 用戶端組件解決 RSCs 的限制
+</div>
+<div class="p-4 rounded-2xl border mb-6">
+  Part 4: 伺服器組件的規則
+</div>
+<div class="p-4 rounded-2xl border">
+  Part 5: 伺服器操作
+</div>
+
+
+---
+layout: section
+class: text-center
+---
+
+# Part 1: 
+
+# React Server Components
+
+---
+
 # 什麼是 React Server Components（RSCs)？
 
 
@@ -603,6 +633,15 @@ const element = <h1>Hello world</h1>
 </div>
 
 ---
+layout: section
+class: text-center
+---
+
+# Part 2: 
+
+# 序列化
+
+---
 
 # 什麼是序列化?
 
@@ -951,6 +990,15 @@ const root = hydrateRoot(document,<App /> );
 </div>
 
 ---
+layout: section
+class: text-center
+---
+
+# Part 3: 
+
+# 用戶端組件解決 RSCs 的限制
+
+---
 
 # React Server Components 需要留意的限制
 並非所有組件都可以成為伺服器組件
@@ -1202,6 +1250,15 @@ $$typeof: Symbol.for("react.module.reference")
 </div>
 
 ---
+layout: section
+class: text-center
+---
+
+# Part 4: 
+
+# 伺服器組件的規則
+
+---
 
 # 序列化至上
 
@@ -1341,6 +1398,15 @@ async function TheParentOfBothComponents() {
 </div>
 
 </div>
+
+---
+layout: section
+class: text-center
+---
+
+# Part 5: 
+
+# 伺服器操作
 
 ---
 
