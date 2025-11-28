@@ -20,30 +20,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 1. 安裝 pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # 2. 修改 Node 設定：啟用 pnpm 快取 (讓 build 更快)
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
+          cache: 'pnpm'
 
-      - name: Setup @antfu/ni
-        run: npm i -g @antfu/ni
-
+      # 3. 安裝依賴：直接用 pnpm 指令，不再安裝 @antfu/ni
       - name: Install dependencies
-        run: nci
+        run: pnpm install --frozen-lockfile
 
-      # ---------------------------------------------------------
-      # 關鍵修改區域：分別建置每一個 Slide
-      # 請將 REPO_NAME 替換成你真正的 Repository 名稱
-      # ---------------------------------------------------------
+      # 4. Build 步驟：把原本的 nr (ni run) 改成 pnpm run 或是直接 slidev
+      # 其實這邊用 nr 也可以，因為你有裝 pnpm 了，但為了單純化，我建議直接用 pnpm exec
 
       - name: Build Conclusion
-        # --base 設定網址路徑， --out 設定編譯後的檔案要放去哪裡
-        run: nr slidev build slides/conclusion/slides.md --base /${{github.event.repository.name}}/conclusion/ --out dist/conclusion
+        run: pnpm slidev build slides/conclusion/slides.md --base /${{github.event.repository.name}}/conclusion/ --out dist/conclusion
 
       - name: Build React Alternatives
-        run: nr slidev build slides/react-alternatives/slides.md --base /${{github.event.repository.name}}/react-alternatives/ --out dist/react-alternatives
+        run: pnpm slidev build slides/react-alternatives/slides.md --base /${{github.event.repository.name}}/react-alternatives/ --out dist/react-alternatives
 
       - name: Build React Server Components
-        run: nr slidev build slides/react-server-components/slides.md --base /${{github.event.repository.name}}/react-server-components/ --out dist/react-server-components
+        run: pnpm slidev build slides/react-server-components/slides.md --base /${{github.event.repository.name}}/react-server-components/ --out dist/react-server-components
 
       # (選用) 建立一個簡單的首頁 index.html，讓你可以連到各個簡報
       - name: Create Index Page
