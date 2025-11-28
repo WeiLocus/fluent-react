@@ -29,7 +29,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: 'pnpm'
 
       # 3. 安裝依賴：每個 slides 子資料夾各自安裝
       - name: Install dependencies for Conclusion
