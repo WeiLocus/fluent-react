@@ -43,16 +43,22 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: slides/react-server-components
 
-      # 4. Build 步驟：把原本的 nr (ni run) 改成 pnpm run 或是直接 slidev
+      # 建立 dist 目錄
+      - name: Create dist directory
+        run: mkdir -p dist
 
+      # 4. Build 步驟：把原本的 nr (ni run) 改成 pnpm run 或是直接 slidev
       - name: Build Conclusion
-        run: pnpm slidev build slides/conclusion/slides.md --base /${{github.event.repository.name}}/conclusion/ --out dist/conclusion
+        run: pnpm slidev build slides.md --base /${{github.event.repository.name}}/conclusion/ --out ../../dist/conclusion
+        working-directory: slides/conclusion
 
       - name: Build React Alternatives
-        run: pnpm slidev build slides/react-alternatives/slides.md --base /${{github.event.repository.name}}/react-alternatives/ --out dist/react-alternatives
+        run: pnpm slidev build slides.md --base /${{github.event.repository.name}}/react-alternatives/ --out ../../dist/react-alternatives
+        working-directory: slides/react-alternatives
 
       - name: Build React Server Components
-        run: pnpm slidev build slides/react-server-components/slides.md --base /${{github.event.repository.name}}/react-server-components/ --out dist/react-server-components
+        run: pnpm slidev build slides.md --base /${{github.event.repository.name}}/react-server-components/ --out ../../dist/react-server-components
+        working-directory: slides/react-server-components
 
       # 5. 建立首頁 index.html，方便連到各個簡報
       - name: Create Index Page
