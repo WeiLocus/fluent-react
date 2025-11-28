@@ -102,7 +102,7 @@ jobs:
                 transition: transform 0.2s, box-shadow 0.2s;
               }
               li:hover {
-                transform: translateX(10px);
+                transform: scale(1.05);
                 box-shadow: 0 4px 12px rgba(0,0,0,0.1);
               }
               a { 
@@ -124,24 +124,21 @@ jobs:
           </head>
           <body>
             <div class="container">
-              <h1>📊 Fluent React Presentations</h1>
+              <h1>Fluent React Presentations</h1>
               <ul>
                 <li>
-                  <a href="./conclusion/">
-                    <span class="emoji">🎯</span>
-                    <span>Conclusion</span>
+                  <a href="./react-server-components/">
+                    <span>React Server Components</span>
                   </a>
                 </li>
                 <li>
                   <a href="./react-alternatives/">
-                    <span class="emoji">⚛️</span>
                     <span>React Alternatives</span>
                   </a>
                 </li>
                 <li>
-                  <a href="./react-server-components/">
-                    <span class="emoji">🚀</span>
-                    <span>React Server Components</span>
+                  <a href="./conclusion/">
+                    <span>Conclusion</span>
                   </a>
                 </li>
               </ul>
