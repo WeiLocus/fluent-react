@@ -127,17 +127,17 @@ jobs:
               <h1>Fluent React Presentations</h1>
               <ul>
                 <li>
-                  <a href="./react-server-components/">
+                  <a href="./react-server-components/" target="_blank" rel="noopener noreferrer">>
                     <span>React Server Components</span>
                   </a>
                 </li>
                 <li>
-                  <a href="./react-alternatives/">
+                  <a href="./react-alternatives/" target="_blank" rel="noopener noreferrer">>
                     <span>React Alternatives</span>
                   </a>
                 </li>
                 <li>
-                  <a href="./conclusion/">
+                  <a href="./conclusion/" target="_blank" rel="noopener noreferrer">>
                     <span>Conclusion</span>
                   </a>
                 </li>
