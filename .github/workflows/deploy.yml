@@ -63,12 +63,92 @@ jobs:
       # 5. 建立首頁 index.html，方便連到各個簡報
       - name: Create Index Page
         run: |
-          echo '<!DOCTYPE html><html><head><title>My Slides</title></head><body>' > dist/index.html
-          echo '<h1>My Presentations</h1><ul>' >> dist/index.html
-          echo '<li><a href="./conclusion/">Conclusion</a></li>' >> dist/index.html
-          echo '<li><a href="./react-alternatives/">React Alternatives</a></li>' >> dist/index.html
-          echo '<li><a href="./react-server-components/">React Server Components</a></li>' >> dist/index.html
-          echo '</ul></body></html>' >> dist/index.html
+          cat > dist/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="zh-TW">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Fluent React Slides</title>
+            <style>
+              body { 
+                font-family: system-ui, -apple-system, sans-serif;
+                max-width: 800px;
+                margin: 80px auto;
+                padding: 40px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+              }
+              .container {
+                background: white;
+                border-radius: 16px;
+                padding: 40px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+              }
+              h1 { 
+                color: #333;
+                margin-bottom: 30px;
+                font-size: 2.5em;
+              }
+              ul { 
+                list-style: none;
+                padding: 0;
+              }
+              li { 
+                margin: 20px 0;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                transition: transform 0.2s, box-shadow 0.2s;
+              }
+              li:hover {
+                transform: translateX(10px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+              }
+              a { 
+                color: #667eea;
+                text-decoration: none;
+                font-size: 1.3em;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+              }
+              a:hover { 
+                color: #764ba2;
+              }
+              .emoji {
+                font-size: 1.5em;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>📊 Fluent React Presentations</h1>
+              <ul>
+                <li>
+                  <a href="./conclusion/">
+                    <span class="emoji">🎯</span>
+                    <span>Conclusion</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="./react-alternatives/">
+                    <span class="emoji">⚛️</span>
+                    <span>React Alternatives</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="./react-server-components/">
+                    <span class="emoji">🚀</span>
+                    <span>React Server Components</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </body>
+          </html>
+          EOF
 
       # ---------------------------------------------------------
       # 6. 設定 GitHub Pages
