@@ -8,8 +8,6 @@ info: |
   ## React Alternatives
   Presentation slides for developers.
 
-# apply UnoCSS classes to the current slide
-class: bg-neutral-800
 defaults:
   class: bg-neutral-800 text-white light:text-black
 # https://sli.dev/features/drawing
@@ -36,7 +34,7 @@ fonts:
 探索現代前端框架的反應性系統
 
 <div class="abs-br m-6 flex items-center">
-  <div class="text-sm">2025-12-02</div>
+  <div class="text-sm">2025-12-09</div>
   <a href="https://github.com/WeiLocus" target="_blank" class="slidev-icon-btn">
     <carbon:logo-github />
   </a>
@@ -131,7 +129,7 @@ Vue 3 核心概念
 <div class="grid grid-cols-2 gap-6 mt-2">
 <div> 
 
-```js [reactive - proxy]
+```js [reactive - proxy] 
 function reactive(obj) {
   return new Proxy(obj,{
     get(target, key) {
@@ -761,7 +759,7 @@ Hydration 必須完成三個核心任務，才能使應用程式可互動
   ```
 
   - **Lazy-load**： 對應的觸發事件程式碼區塊才會被按需載入、解析和執行
-- 序列化包含了組件邊界和狀態的依賴關係，Qwik 能夠做到任何組件都可以獨立恢復，而不需要依賴其父組件的程式碼在客戶端被載入或執行
+- 序列化包含了組件邊界和狀態的依賴關係，Qwik 能夠做到任何組件都可以獨立恢復，而不需要依賴其父組件的程式碼在用戶端被載入或執行
 
 <div class="mt-3 pl-6 font-bold text-green-700 text-lg">
 即時可互動 + 按需載入 +  O(1) 啟動
@@ -783,9 +781,9 @@ Hydration 必須完成三個核心任務，才能使應用程式可互動
 
 | 項目          | Resumability（Qwik）  | React Server Components（RSC）   |
 | ------------ | ---------------------- | ------------------------------- |
-| 序列化的目標  |  將應用邏輯、事件監聽器、組件邊界與所有狀態序列化至 HTML，讓客戶端「知道如何執行下一步」。  |  序列化 Server Component 的渲染結果（JSX/vDOM）與 Client Component 的初始 Props，讓客戶端「知道要渲染什麼」與「元件的輸入是什麼」。 |
+| 序列化的目標  |  將應用邏輯、事件監聽器、組件邊界與所有狀態序列化至 HTML，讓用戶端「知道如何執行下一步」。  |  序列化 Server Component 的渲染結果與 Client Component 的初始 Props，讓用戶端「知道要渲染什麼」與「元件的輸入是什麼」。 |
 | 互動性載入  | 使用 Qwikloader 設置單一全域事件監聽器。<br />事件處理器以 QRL 形式序列化於 DOM 屬性中<br />（例如 `on:click="./chunk.js#handler_symbol"`），<br />僅在使用者互動時才 按需載入 (Lazy-load) 對應程式碼。 | 互動性元件需標記為 `"use client"`，其 JavaScript 通常在頁面載入時下載並執行，進行水合以附加事件處理器。  |
-| 元件依賴性  | 組件邊界資訊被序列化，使任何組件可獨立恢復，<br />不需父組件程式碼在客戶端載入或執行。  | Client Component (CC) 必須由 Server Component (SC) 渲染並傳遞 Props。SC 不在 Bundle 中，但 CC 仍需水合，且其 Props 依賴 SC 的輸出。  |
+| 元件依賴性  | 組件邊界資訊被序列化，使任何組件可獨立恢復，<br />不需父組件程式碼在用戶端載入或執行。  | Client Component (CC) 必須由 Server Component (SC) 渲染並傳遞 Props。SC 不在 Bundle 中，但 CC 仍需水合，且其 Props 依賴 SC 的輸出。  |
 
 </div>
 
@@ -1117,6 +1115,7 @@ React Forget 與 Signals
 
 <div class="mt-8">
 
+<v-clicks>
 <div class="mb-8 text-xl text-center">為什麽 React 不採用 Signal ?</div>
 
 <div class="w-[80%] mx-auto p-6 bg-gradient-to-r from-indigo-500 to-blue-500 bg-opacity-10 rounded-lg">
@@ -1134,6 +1133,7 @@ React 應該自動找出算繪 UI 的最佳方式<br />
 </div>
 
 </div>
+</v-clicks>
 
 </div>
 
@@ -1458,28 +1458,17 @@ class: text-center
 
 <div class="mt-6 space-y-4">
 
-<div class="p-2 bg-blue-500 bg-opacity-10 rounded">
-
-**1. Reactivity 模型決定效能特性**
-
-Fine-grained (Signals) vs Coarse-grained (React) 各有權衡
-
+<div class="p-4 bg-neutral-700 rounded-xl">
+  <div class="text-blue-400 font-bold mb-2 tracking-wider">Reactivity 模型決定效能特性</div>
+  <div class="pl-2">Fine-grained (Signals) vs Coarse-grained (React) 各有權衡</div>
 </div>
-
-<div class="p-2 bg-green-500 bg-opacity-10 rounded">
-
-**2. React 不是傳統意義上的 reactive**
-
-`v = f(s)` - 重新執行函數而非自動傳播變化
-
+<div class="p-4 bg-neutral-700 rounded-xl">
+  <div class="text-blue-400 font-bold mb-2 tracking-wider">React 不是傳統意義上的 reactive</div>
+  <div class="pl-2"><code>v = f(s)</code> - 重新執行函數而非自動追蹤變化</div>
 </div>
-
-<div class="p-2 bg-pink-500 bg-opacity-10 rounded">
-
-**3. 沒有最好的框架**
-
-根據專案需求、團隊能力、生態系選擇最適合的
-
+<div class="p-4 bg-neutral-700 rounded-xl">
+  <div class="text-blue-400 font-bold mb-2 tracking-wider">沒有最好的框架</div>
+  <div class="pl-2">根據專案需求、團隊能力、生態系選擇最適合的</div>
 </div>
 
 </div>
@@ -1488,43 +1477,49 @@ Fine-grained (Signals) vs Coarse-grained (React) 各有權衡
 
 # 複習問題
 
-<div class="mt-8 space-y-6">
-
 <v-clicks>
 
 1. React、Vue、Svelte、Solid 和 Angular 之間的回應性模型有何不同？這些差異對這些程式庫 / 框架的效能和開發體驗有何影響？
+ - 主要分為粗回應性與細回應性模型。
+React 屬於粗回應性，當狀態變更時，它會重新執行整個元件函式，然後再透過虛擬 DOM 來優化性能。
+而 Vue、Svelte、Solid 則採用細回應性。它們使用 Signals 或編譯器，能夠精確追蹤狀態依賴。當資料改變時，系統會主動通知，只對 DOM 中變化的特定部分進行更新。且組件函式通常只需運行一次，因此運行效能更高，且開發者不必擔心手動記憶化的複雜性
 
 2. 討論 Qwik 採用哪一種獨門手段來將效能最大化，他與我們討論過的其他 UI 程式庫 / 框架的方法有何不同？
-
-3. 本章討論過的每一個 UI 程式庫 / 框架的核心優勢和劣勢是什麼？這些優勢和劣勢如何影響你為特地專案選擇 程式庫 / 框架?
-
-4. React 在傳統意義上不是回應性的。詳細解釋這個說法，比較他與 vue 或 Svelte 等 程式庫中的推送式回應性模型。
-
-5. 什麼是 React Forget？它如何運作？比較它與 singal。
+ - Qwik 最大的不同在於它使用的是可恢復性，而非Hydration
+伺服器端渲染後，用戶端必須下載所有元件程式碼，並重新執行程式碼，才能重建元件樹、事件監聽器，使應用程式變得可互動，Qwik 則跳過這個「重播」步驟。它在伺服器端執行時會暫停，並將應用程式的所有狀態、事件監聽器和元件樹結構資訊序列化到 HTML 中。用戶端啟動幾乎是瞬時的，它只載入一個極小的 Qwik Loader，然後直接從伺服器端暫停的位置恢復執行。
 
 </v-clicks>
-</div>
+
+---
+
+# 複習問題
+
+<v-clicks>
+
+3. React 在傳統意義上不是回應性的。詳細解釋這個說法，比較他與 vue 或 Svelte 等 程式庫中的推送式回應性模型。
+- 在傳統的回應性中，組件會自動追蹤狀態的依賴關係。但 React 不會自動追蹤依賴項目和傳播變更，當 `useState` 狀態更新時，React 重新執行整個組件函式，產生新的虛擬 DOM，透過協調來比較新舊樹之間的差異，拉取需要變更的部分。這種方式雖然確保了 v = f(s)，但會造成不必要的組件重新執行。<br />推送式模型（如 Vue, Svelte, Solid）使用 Signals。當程式碼執行時，計算之間的依賴關係會被自動追蹤，當回應性依賴項目改變時，依賴它的所有計算都會自動重新執行來反映這個改變。
+ 
+4. 什麼是 React Forget？它如何運作？比較它與 singal。
+- React Forget 是一種 React 工具鏈，他會強制執行 React 規則，程式碼在運行時能夠自動跳過那些狀態或 Props 沒有改變的元件的重新執行，聰明的將「不會在應用程式的生命週期中改變的值記憶化」，解決 React 粗回應性帶來的效能問題。
+- Signals 可以精準的推送更新，React Forget 處理了記憶化，但 React 在更新時仍需要遍歷元件樹並比較屬性，才能決定哪些元件可以跳過渲染。
+
+</v-clicks>
 
 ---
 layout: center
 class: text-center
 ---
 
-# Thank You
-
-<div class="mt-8">
-
-## 學習資源
-
-<div class="mt-6 space-y-2">
-
-📚 [Angular.js 官方文檔](https://angular.dev/) - angular.dev  
-📚 [Vue.js 官方文檔](https://vuejs.org/) - vuejs.org   
-📚 [Solid 官方網站](https://www.solidjs.com/) - solidjs.com    
-📚 [Svelte 官方教學](https://svelte.dev/) - svelte.dev   
-📚 [Qwik 文檔](https://qwik.dev/) - qwik.builder.io  
-📚 [React 文檔](https://react.dev/)- react.dev
-
-</div>
-
+<h1 class="text-2xl font-bold text-center">學習資源</h1>
+<div class="flex justify-center">
+  <div class="text-left"> 
+    <ul class="space-y-1">
+      <li class="list-none">📚 <a href="https://angular.dev/">Angular.js</a> - angular.dev</li>
+      <li class="list-none">📚 <a href="https://vuejs.org/">Vue.js</a> - vuejs.org</li>
+      <li class="list-none">📚 <a href="https://www.solidjs.com/">Solid</a> - solidjs.com</li>
+      <li class="list-none">📚 <a href="https://svelte.dev/">Svelte</a> - svelte.dev</li>
+      <li class="list-none">📚 <a href="https://qwik.dev/">Qwik</a> - qwik.builder.io</li>
+      <li class="list-none">📚 <a href="https://react.dev/">React</a> - react.dev</li>
+    </ul>
+  </div>
 </div>
