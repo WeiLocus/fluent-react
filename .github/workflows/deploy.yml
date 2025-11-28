@@ -1,0 +1,78 @@
+name: Deploy pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Setup @antfu/ni
+        run: npm i -g @antfu/ni
+
+      - name: Install dependencies
+        run: nci
+
+      # ---------------------------------------------------------
+      # 關鍵修改區域：分別建置每一個 Slide
+      # 請將 REPO_NAME 替換成你真正的 Repository 名稱
+      # ---------------------------------------------------------
+
+      - name: Build Conclusion
+        # --base 設定網址路徑， --out 設定編譯後的檔案要放去哪裡
+        run: nr slidev build slides/conclusion/slides.md --base /${{github.event.repository.name}}/conclusion/ --out dist/conclusion
+
+      - name: Build React Alternatives
+        run: nr slidev build slides/react-alternatives/slides.md --base /${{github.event.repository.name}}/react-alternatives/ --out dist/react-alternatives
+
+      - name: Build React Server Components
+        run: nr slidev build slides/react-server-components/slides.md --base /${{github.event.repository.name}}/react-server-components/ --out dist/react-server-components
+
+      # (選用) 建立一個簡單的首頁 index.html，讓你可以連到各個簡報
+      - name: Create Index Page
+        run: |
+          echo '<!DOCTYPE html><html><head><title>My Slides</title></head><body>' > dist/index.html
+          echo '<h1>My Presentations</h1><ul>' >> dist/index.html
+          echo '<li><a href="./conclusion/">Conclusion</a></li>' >> dist/index.html
+          echo '<li><a href="./react-alternatives/">React Alternatives</a></li>' >> dist/index.html
+          echo '<li><a href="./react-server-components/">React Server Components</a></li>' >> dist/index.html
+          echo '</ul></body></html>' >> dist/index.html
+
+      # ---------------------------------------------------------
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          # 上傳包含所有子資料夾的 dist 目錄
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
