@@ -31,12 +31,20 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      # 3. 安裝依賴：直接用 pnpm 指令，不再安裝 @antfu/ni
-      - name: Install dependencies
+      # 3. 安裝依賴：每個 slides 子資料夾各自安裝
+      - name: Install dependencies for Conclusion
         run: pnpm install --frozen-lockfile
+        working-directory: slides/conclusion
+
+      - name: Install dependencies for React Alternatives
+        run: pnpm install --frozen-lockfile
+        working-directory: slides/react-alternatives
+
+      - name: Install dependencies for React Server Components
+        run: pnpm install --frozen-lockfile
+        working-directory: slides/react-server-components
 
       # 4. Build 步驟：把原本的 nr (ni run) 改成 pnpm run 或是直接 slidev
-      # 其實這邊用 nr 也可以，因為你有裝 pnpm 了，但為了單純化，我建議直接用 pnpm exec
 
       - name: Build Conclusion
         run: pnpm slidev build slides/conclusion/slides.md --base /${{github.event.repository.name}}/conclusion/ --out dist/conclusion
@@ -47,7 +55,7 @@ jobs:
       - name: Build React Server Components
         run: pnpm slidev build slides/react-server-components/slides.md --base /${{github.event.repository.name}}/react-server-components/ --out dist/react-server-components
 
-      # (選用) 建立一個簡單的首頁 index.html，讓你可以連到各個簡報
+      # 5. 建立首頁 index.html，方便連到各個簡報
       - name: Create Index Page
         run: |
           echo '<!DOCTYPE html><html><head><title>My Slides</title></head><body>' > dist/index.html
@@ -58,10 +66,11 @@ jobs:
           echo '</ul></body></html>' >> dist/index.html
 
       # ---------------------------------------------------------
-
+      # 6. 設定 GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # 7. 上傳 dist 目錄
       - uses: actions/upload-pages-artifact@v3
         with:
           # 上傳包含所有子資料夾的 dist 目錄
