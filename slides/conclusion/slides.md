@@ -35,7 +35,7 @@ fonts:
 
 
 <div class="abs-br m-6 flex items-center">
-  <div class="text-sm">2025-12-09</div>
+  <div class="text-sm">2025-12-16</div>
   <a href="https://github.com/WeiLocus" target="_blank" class="slidev-icon-btn">
     <carbon:logo-github />
   </a>
@@ -91,7 +91,7 @@ The last comment block of each slide will be treated as slide notes. It will be 
     <div class="flex-1">
       <div class="text-xl font-bold mb-2">框架與生態系統的進化</div>
       <div class="text-sm opacity-90 leading-relaxed">
-      探討現代框架如何在 React 之上提供完整解決方案，如 Remix、Nexxt.js，了解框架如何實施路由、資料提取、資料異動，深入 React Server Components，如何透過伺服器渲染減少 JS bundle。最後從 Vue、Solid、Qwik、Angular、Svelte 等框架中了解不同的反應性模型，以及 React 如何透過編譯器持續演進。
+      探討現代框架如何在 React 之上提供完整解決方案，如 Remix、Next.js，了解框架如何實施路由、資料提取、資料異動，深入 React Server Components，如何透過伺服器渲染減少 JS bundle。最後從 Vue、Solid、Qwik、Angular、Svelte 等框架中了解不同的反應性模型，以及 React 如何透過編譯器持續演進。
       </div>
     </div>
   </div>
@@ -116,7 +116,7 @@ The last comment block of each slide will be treated as slide notes. It will be 
   </div>
     <div class="p-4 bg-neutral-700 rounded ">
     <div class="text-blue-400 font-bold mb-2 tracking-wider">宣告式帶來更強大的功能</div>
-    <div class="text-sm">React 將「UI 的描述（JSX）」和「UI 更新邏輯（Reconciler）」獨立，實現 "write once, anywhere" 的 UI 開發方法，用相同的程式碼將內容渲染到 DOM、伺服器或原生平台</div>
+    <div class="text-sm">React 將「UI 的描述（JSX）」和「UI 更新邏輯（Reconciler）」獨立，實現 "write once, run anywhere" 的 UI 開發方法，用相同的程式碼將內容渲染到 DOM、伺服器或原生平台</div>
   </div>
     <div class="p-4 bg-neutral-700 rounded">
     <div class="text-blue-400 font-bold mb-2 tracking-wider">模式演進思考</div>
