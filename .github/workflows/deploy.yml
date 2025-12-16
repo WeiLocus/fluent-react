@@ -147,6 +147,45 @@ jobs:
           </html>
           EOF
 
+      # 5.1 建立 404 頁面，把未知路徑導回對應的子資料夾 root
+      - name: Create 404 Redirect Page
+        run: |
+          cat > dist/404.html << 'EOF'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width,initial-scale=1" />
+            <title>Redirecting...</title>
+          </head>
+          <body>
+            <script>
+            (function(){
+              // location.pathname example: /<repo>/<section>/.../maybe/more
+              var parts = location.pathname.split('/');
+              // parts[0] = "" (leading slash), parts[1] = repo name, parts[2] = section/subfolder
+              if(parts.length >= 3 && parts[1] && parts[2]){
+                var repo = '/' + parts[1] + '/';
+                var section = parts[2] + '/';
+                var rest = parts.slice(3).join('/');
+                var target = repo + section;
+                if(rest) target += '#' + rest;
+                // preserve query and hash
+                target += location.search + location.hash;
+                location.replace(target);
+              } else if(parts.length === 2 && parts[1]){
+                // e.g. /<repo> -> go to repo root
+                location.replace('/' + parts[1] + '/');
+              } else {
+                // fallback to site root
+                location.replace('/');
+              }
+            })();
+            </script>
+          </body>
+          </html>
+          EOF
+
       # ---------------------------------------------------------
       # 6. 設定 GitHub Pages
       - name: Setup Pages
