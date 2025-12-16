@@ -163,31 +163,41 @@ jobs:
             <div>Loading presentation…</div>
             <script>
             (async function(){
-              // Example pathname: /<user_or_org>/<repo>/<section>/... -> we care about repo and first-level section
+              // repo name in this project
+              var repoName = 'fluent-react';
               var parts = location.pathname.split('/').filter(Boolean);
-              // parts[0]=user/org, parts[1]=repo, parts[2]=section (e.g. react-server-components)
-              if(parts.length >= 3){
-                var repo = parts[1];
-                var section = parts[2];
-                var indexUrl = '/' + repo + '/' + section + '/index.html';
-                try{
-                  var res = await fetch(indexUrl, {cache: 'no-store'});
-                  if(!res.ok) throw new Error('index not found');
-                  var html = await res.text();
-                  // ensure relative assets load correctly by injecting a <base> to the section root
-                  var baseHref = '/' + repo + '/' + section + '/';
-                  html = html.replace(/<head(.*?)>/i, function(m){ return '<head'+m.match(/\(.*?\)/) +'><base href="'+baseHref+'">'; });
-                  // Fallback naive injection if previous replace didn't work
-                  if(!/\<base href=/.test(html)){
-                    html = html.replace(/<head([^>]*)>/i, '<head$1><base href="'+baseHref+'">');
-                  }
-                  document.open();
-                  document.write(html);
-                  document.close();
-                  return;
-                }catch(e){
-                  console.error('Failed to load index:', e);
-                }
+              // Try to find the repo segment in the path (handles username.github.io/<repo>/... and <user>/<repo>/...)
+              var repoIndex = parts.indexOf(repoName);
+              var repo, section, rest;
+              if(repoIndex !== -1 && parts.length > repoIndex + 1){
+                repo = parts[repoIndex];
+                section = parts[repoIndex + 1];
+                rest = parts.slice(repoIndex + 2).join('/');
+              } else if(parts.length >= 2){
+                // fallback: assume path like /<repo>/<section>/...
+                repo = parts[0];
+                section = parts[1];
+                rest = parts.slice(2).join('/');
+              } else {
+                // cannot determine section, go home
+                location.replace('/');
+                return;
+              }
+
+              var indexUrl = '/' + repo + '/' + section + '/index.html';
+              try{
+                var res = await fetch(indexUrl, {cache: 'no-store'});
+                if(!res.ok) throw new Error('index not found: ' + res.status);
+                var html = await res.text();
+                // ensure relative assets load correctly by injecting a <base> to the section root
+                var baseHref = '/' + repo + '/' + section + '/';
+                html = html.replace(/<head[^>]*>/i, function(m){ return m + '<base href="' + baseHref + '">'; });
+                document.open();
+                document.write(html);
+                document.close();
+                return;
+              }catch(e){
+                console.error('Failed to load index:', e);
               }
               // If anything fails, fallback to root index
               location.replace('/');
