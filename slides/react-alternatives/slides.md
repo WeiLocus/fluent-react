@@ -34,7 +34,7 @@ fonts:
 探索現代前端框架的反應性系統
 
 <div class="abs-br m-6 flex items-center">
-  <div class="text-sm">2025-12-09</div>
+  <div class="text-sm">2025-12-16</div>
   <a href="https://github.com/WeiLocus" target="_blank" class="slidev-icon-btn">
     <carbon:logo-github />
   </a>
@@ -84,11 +84,10 @@ class: text-center
 
 **Vue 2**: `getter` / `setter`
 
-**Vue 3**: `reactive` 函式使用 `Proxy` 攔截物件的 get/set 操作， `ref` 函式使用 `getter` / `setter`
 
 <div class="mt-8"/>
 
-Vue 3 核心概念
+Vue 3: 
 
 <span v-mark.underline.orange>`reactive()` - 處理物件型別資料的響應性</span>
 
@@ -98,6 +97,11 @@ Vue 3 核心概念
 <span v-mark.underline.orange>`ref()` -處理基本型別資料的響應性，也可以接受物件型別</span>
 
 將一個值（如數字或字串）包裝在一個具有 `.value` 屬性的物件中。
+
+```js
+const string = ref("vue")
+console.log(string.value)
+```
 
 </div>
 
@@ -129,7 +133,7 @@ Vue 3 核心概念
 <div class="grid grid-cols-2 gap-6 mt-2">
 <div> 
 
-```js [reactive - proxy] 
+```js [reactive - proxy] {all|2|3-10}
 function reactive(obj) {
   return new Proxy(obj,{
     get(target, key) {
@@ -148,7 +152,7 @@ function reactive(obj) {
 </div>
 <div>
 
-```js [ref - getter + setter]
+```js [ref - getter + setter] {all|2-10}
 function ref(value) {
   const refObject = {
     get value() {
@@ -224,7 +228,7 @@ Signals 是一種簡單的響應式基本元素 (Reactive Primitive)，它們本
 <div>
 
 - 類似 Vue 的 refs 的 回應式基本元素(Reactivity Primitive)
-- 提供依賴追蹤的「值容器」
+- 提供依賴項目追蹤的「值容器」
 - 細回應性
 
 </div>
@@ -308,7 +312,7 @@ Ryan Carniato (Solid 作者) 將 2010 年的概念帶回現代，改變整個前
 
 ---
 
-# Angular - Change Detection
+# Angular - Change Detection 到 Signal
 由 Google 開發和維護
 
 
@@ -316,9 +320,9 @@ Ryan Carniato (Solid 作者) 將 2010 年的概念帶回現代，改變整個前
 
 檢查應用程式的狀態是否改變，是否需要更新 DOM
 
-- 每個組件都有變更檢測器，負責使用 **Zone.js** 檢查 view 的變化
+- 每個組件都有變更檢測器，負責使用 **Zone.js** 程式庫檢查 view 的變化
 - 每次偵測到「可能有變化」時，Angular 會從上到下遍歷組件，尋找變更
-- 高度優化且可配置
+- 高度優化且高效率的
 
 Angular 16: 放棄 dirty-checking，引入 Signal API
 
@@ -370,9 +374,8 @@ Svelte 4 - compile-time reactivity
 - Svelte 是一種編譯器
 - 無 Virtual DOM
 - 產生程式碼直接更新 DOM
-- 編譯期回應性，所有「響應式行為」都是靠 編譯器在編譯階段靜態分析
 
-## Reactive Statements
+## 語法
 使用 let、=、export 關鍵字和 $: 標籤
 
 </div>
@@ -444,7 +447,7 @@ Svelte 5 - Runes
 
 **Svelte 4 問題**:
 - 捷思法(heuristic) 僅適用於組件頂層的 let 宣告
-- 重構困難，程式碼在 `.svelte` 檔案內（具備反應性）與在 `.js` 或 `.ts` 檔案內（缺乏反應性）的行為不同
+- 重構困難，程式碼在 `.svelte` 檔案內（具備反應性）與在 `.js` 檔案內（缺乏反應性）的運行方式不同
 - 將狀態邏輯封裝並在多個組件間共享，必須使用 Store API，這種方式要求邏輯必須遵循嚴格的 Store 合約，處理複雜的狀態邏輯不好用
 
 </div>
@@ -544,7 +547,7 @@ import { createCounter } from './counter.js';
 
 ---
 
-# Svelte 5 - Runtime Reactivity
+# Svelte 5 - 執行期回應性
 
 <div class="grid grid-cols-2 gap-6">
 
@@ -607,9 +610,8 @@ $effect(() => {
 
 ### 核心概念
 - 沒有 Virtual DOM
-- 基於反應式基本元素(reactive primitives) <br />反應式系統中，最基本、最小的可追蹤單位
+- 基於反應式基本元素 (反應式系統中，最基本、最小的可追蹤單位)
 - 使用細回應性系統自動追蹤依賴項目，直接更新 DOM
-- **Signals** 是反應式系統中的核心元素
 
 建立回應性
 ```js
@@ -664,7 +666,7 @@ function Counter() {
 <img src="https://app.eraser.io/workspace/maDvFw5OryuPJOwSLyK9/preview?elements=cry9JT4nroFQ4rRxzOpvCg&type=embed" />
 
 
-**Solid 與 React**差異：
+**Solid 與 React** 差異：
 - Component function 只執行一次
 - `count()` 會在 `setCount` 被呼叫時改變，稱為細回應性，與 React 粗回應性不同
 - 細回應性可以把沒必要的更新減到最少，避免差異比對的步驟
@@ -679,7 +681,7 @@ function Counter() {
 ---
 
 # Qwik - Resumability & O(1) framework
-resumability 和 優先載入，確保最重要的組件盡快發揮效用
+可恢復性和 優先載入，確保最重要的組件盡快發揮效用
 
 <div class="grid grid-cols-3 gap-6">
 
@@ -721,7 +723,6 @@ resumability 和 優先載入，確保最重要的組件盡快發揮效用
 # Hydration VS. Resumability (Qwik)
 
 ### Hydration：重播 (Replayable)
-Server → HTML → JS 下載 → 重播 → 可互動
 
 Hydration 必須完成三個核心任務，才能使應用程式可互動
 <div class="p-4 bg-blue-200 dark:bg-blue-500 dark:bg-opacity-10 rounded">
@@ -759,10 +760,10 @@ Hydration 必須完成三個核心任務，才能使應用程式可互動
   ```
 
   - **Lazy-load**： 對應的觸發事件程式碼區塊才會被按需載入、解析和執行
-- 序列化包含了組件邊界和狀態的依賴關係，Qwik 能夠做到任何組件都可以獨立恢復，而不需要依賴其父組件的程式碼在用戶端被載入或執行
+- 序列化包含了組件邊界和狀態的依賴關係，Qwik 能夠做到任何組件都可以獨立恢復
 
 <div class="mt-3 pl-6 font-bold text-green-700 text-lg">
-即時可互動 + 按需載入 +  O(1) 啟動
+即時可互動 + 按需載入
 </div>
 
 <div class="absolute bottom-3 right-3">
@@ -772,25 +773,6 @@ Hydration 必須完成三個核心任務，才能使應用程式可互動
 <!--
 (例如 `on:click="./chunk.js#handler_symbol"`)，精確知道應該載入哪個程式碼區塊 (chunk) 和執行哪個符號 (symbol) 來響應事件
 -->
-
----
-
-# 都是序列化，和 RSC 有什麼不同？
-
-<div class="text-md">
-
-| 項目          | Resumability（Qwik）  | React Server Components（RSC）   |
-| ------------ | ---------------------- | ------------------------------- |
-| 序列化的目標  |  將應用邏輯、事件監聽器、組件邊界與所有狀態序列化至 HTML，讓用戶端「知道如何執行下一步」。  |  序列化 Server Component 的渲染結果與 Client Component 的初始 Props，讓用戶端「知道要渲染什麼」與「元件的輸入是什麼」。 |
-| 互動性載入  | 使用 Qwikloader 設置單一全域事件監聽器。<br />事件處理器以 QRL 形式序列化於 DOM 屬性中<br />（例如 `on:click="./chunk.js#handler_symbol"`），<br />僅在使用者互動時才 按需載入 (Lazy-load) 對應程式碼。 | 互動性元件需標記為 `"use client"`，其 JavaScript 通常在頁面載入時下載並執行，進行水合以附加事件處理器。  |
-| 元件依賴性  | 組件邊界資訊被序列化，使任何組件可獨立恢復，<br />不需父組件程式碼在用戶端載入或執行。  | Client Component (CC) 必須由 Server Component (SC) 渲染並傳遞 Props。SC 不在 Bundle 中，但 CC 仍需水合，且其 Props 依賴 SC 的輸出。  |
-
-</div>
-
-
-<div class="absolute bottom-3 right-3">
-<img src="/qwik.svg" width="20" height="20"/>
-</div>
 
 ---
 
@@ -824,11 +806,11 @@ Hydration 必須完成三個核心任務，才能使應用程式可互動
 
 <div class="px-4 py-3 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex gap-30 items-center">
   <div class="font-bold w-46">
-    元件生命週期方法<br />生態系與工具鏈
+    元件生命週期方法<br />生態系統與工具
   </div>
   <ul class="text-[16px]">
     <li>用生命週期方法或 hook 來處理組件創建、更新、銷毀階段，執行副作用與資源清理</li>
-    <li> 支援現代 JavaScript/TypeScript 和工具，包括ES6語法、模組和 Webpack、Babel 等建置工具</li>
+    <li> 支援現代 JavaScript/TypeScript 功能和工具，包括ES6語法、模組和 Webpack、Babel 等建置工具</li>
   </ul>
 </div>
 
@@ -919,7 +901,7 @@ View = Function of State
 
 **重點**:
 
-View 等於 狀態的函式，狀態改變時，「重新執行函數」來套用任何必要的更新，而不是直接更新值
+View 等於 狀態的函式，狀態改變時，「重新執行函式」來套用任何必要的更新，而不是直接更新值
 
 經過虛擬 DOM 差異比對和調和程序，這種明確設置狀態與重新算繪的模式，比回應性自動傳播變更「更容易預測」
 
@@ -965,7 +947,7 @@ export default function Counter () {
 2. 整個 `Counter` function **重新執行**
 3. 包括 `useState` hook 也重新執行
 4. 產生新的 Virtual DOM
-5. Diff 並更新實際 DOM
+5. 更新實際 DOM
 
 </div>
 
@@ -1257,7 +1239,7 @@ Compiler 會自動判斷哪些計算結果或函式引用需要被快取，實�
 ---
 
 # React 規則 ⟹ Forget 優化
-React 規則讓 React Forget 知道，如何為我們記憶化
+React 規則讓 React Forget 編譯器知道哪些值在應用程式的整個生命週期中不會改變，並為我們記憶化
 
 <div class="grid grid-cols-2 gap-6 mt-2">
 

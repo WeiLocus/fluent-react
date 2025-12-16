@@ -30,7 +30,7 @@ fonts:
 深入了解 RSCs 的運作原理與優勢
 
 <div class="abs-br m-6 flex items-center">
-  <div class="text-sm">2025-12-09</div>
+  <div class="text-sm">2025-12-16</div>
   <a href="https://github.com/WeiLocus" target="_blank" class="slidev-icon-btn">
     <carbon:logo-github />
   </a>
@@ -76,8 +76,14 @@ class: text-center
 </div>
 
 - React Server Components 是 React 生態系統的趨勢
+  - 目的是提高應用程式的效能、效率和使用者體驗
 - Next.js 已全面支持 RSCs
 - 在 React 19 是穩定的，但建議釘選到特定的 React 版本
+
+<div class="bg-red-50 dark:bg-red-900/20 p-4 rounded my-6">
+  <a href="https://nextjs.org/blog/CVE-2025-66478">2025-12-03 Next.js 發佈 RCE (remote code execution ) 漏洞: CVE-2025-66478</a>
+  <div className="mt-2">受影響的範圍是使用 App Router 的 Next.js 應用程式，具體版本為：Next.js 15.x, 16.x 以及 14.3.0-canary.77 後的 canary 版本。</div>
+</div>
 
 <div class="absolute bottom-3 right-3 flex gap-4">
   <a
@@ -201,45 +207,6 @@ async function Page({ page }) {
 
 ---
 
-# 提供高效率的應用程式
-
-<div class="mt-8" />
-React Server Components 藉著使用 prop 來將資料從伺服器組件傳給瀏覽器內的用戶端互動組件，提供高效率的應用程式
-
-(Server Component 先幫你抓好資料，再把資料用 props 傳給 Client Component，讓用戶在瀏覽器中直接使用這些資料做互動)
-
----
-
-# 伺服器組件怎麼運作
-
-<div class="my-8 p-4 bg-blue-500 bg-opacity-10 rounded">
-💡 React 組件只是一個 回傳 React 元素的函式
-</div>
-
-
-```js
-const Component = () => <div>hi!</div>
-```
-
-對應到 JavaScript 物件，架構如下：
-
-
-
-```js {all}
-{
-  $$typeOf: Symbol("react.element"),
-  type: "div",
-  props: {
-    children: [{
-      $$typeOf: Symbol("react.element"),
-      props: { children: "hi!" }
-    }]
-  }
-}
-```
-
----
-
 # 伺服器組件的好處
 
 <div class="grid grid-cols-2 gap-6">
@@ -283,7 +250,7 @@ async function Page({ id }) {
 # 伺服器組件的好處
 <div class="mt-6" />
 
-4. 減少用戶端程式碼包大小
+4. 減少用戶端打包體積
 5. 自動程式碼切分: 伺服器可以根據資料和權限判斷是否需要某個用戶端組件。如果組件不需要，則該組件的 JavaScript 程式碼塊將完全不會被下載
 6. 消除網路瀑布與提升資料獲取效率: 因為伺服器組件能夠直接在伺服器環境中執行資料獲取邏輯
 
@@ -363,8 +330,8 @@ async function Page({ id }) {
 <div class="text-[16px] px-6">
 <a href="https://vercel.com/guides/how-to-optimize-rsc-payload-size#what-is-in-the-rsc-payload">RSC payload</a> 包含：
   <li>伺服器組件的渲染結果</li>
-  <li>需要在瀏覽器端運行的 Client Component，Payload 只放一個「位置標記」和它的 JavaScript 檔案參考</li>
-  <li>Server Component 要傳給 Client Component 的 props（資料)</li>
+  <li>需要在瀏覽器端運行的用戶端組件，Payload 只放一個「位置標記」和它的 JavaScript 檔案參考</li>
+  <li>伺服器組件要傳給用戶端組件的 props</li>
 </div> 
 
 
@@ -601,6 +568,16 @@ if (jsx.$$typeof === Symbol.for("react.element")) {
 </div>
 
 ---
+layout: section
+class: text-center
+---
+
+# Part 2: 
+
+# 序列化
+
+---
+
 
 # 什麼是序列化?
 
@@ -631,15 +608,6 @@ const element = <h1>Hello world</h1>
 </v-clicks>
 
 </div>
-
----
-layout: section
-class: text-center
----
-
-# Part 2: 
-
-# 序列化
 
 ---
 
@@ -698,7 +666,8 @@ htmlString 會是 `<h1>Hello world</h1>`
 <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded mt-4">
 
 1. <span v-mark.underline.orange>因`$$typeof` 屬性無法被序列化</span>，RSC 架構使用了一個特殊的序列化過程，將不可傳輸的 Symbol 值替換成可傳輸的字串表示（例如將 `$$typeof` 的 Symbol 值替換為 "react.element" 字串）
-2. <span v-mark.underline.orange>比對靜態 HTML 的 DOM 元素結構 (伺服器端) 與 React 組件透過 jsx 來定義的結構 (用戶端)是否相符</span>，若相符，即可產生一致且可預測的初始算繪，確保了初始載入期間的正確性與效率
+2. <span v-mark.underline.orange>比對「伺服器送來的 HTML 結構」和「用 JSX 定義的 component 結構」是否相符</span>，若相符，即可產生一致且可預測的初始算繪，確保了初始載入期間的正確性與效率
+
 
 </div>
 
@@ -772,9 +741,7 @@ JSON.stringify(jsxTree, (key, value) => {
 
 <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded">
 
-原本無法傳輸的 React 元素樹，成功轉換為**字串化的 JSON 物件** (在 Next.js 則是 RSC Payload)
-
-可以透過網路發送給用戶端
+原本無法傳輸的 React 元素樹，轉換為**字串化的 JSON 物件**，可以透過網路發送給用戶端
 
 </div>
 
@@ -827,8 +794,6 @@ JSON.parse(serializedJsxTree, (key, value) => {
 
 </div>
 </div>
-
-使用者點擊連結時，向伺服器傳送目標 URL，伺服器會將該網頁的 JSX 樹 送回來給我們，在瀏覽器內的 React 使用新 JSX 樹來重新算繪整個網頁，讓我們得到一個新網頁，而不需要重新載入整個網頁。
 
 ---
 
@@ -1122,32 +1087,10 @@ React 藉著 bundler 建構工具來支援區分「伺服器組件」和「用�
 
 ---
 
-# 何時該匯入和執行用戶端組件?
-
-<div class="mt-8 p-4 bg-blue-500 bg-opacity-10 rounded">
-💡 模組參考機制
-</div>
-
-在 Counter 例子中
-
-- `InteractiveClientPart` 組件是用戶端組件
-- 伺服器會替它預留一個**位置 (placeholder)**
-- 對應到用戶端具體模組的**參考 (reference)**
-
-**標記方式**:
-
-`Symbol(react.module.reference)` 告訴 React 這是一個用戶端組件的參考
-```js
-$$typeof: Symbol.for("react.module.reference")
-```
-
----
-
-# 伺服器渲染的組件樹結構
-伺服器會為用戶端組件建立一個模組參考
-
+# 用戶端和伺服器組件的組件樹
+伺服器會為用戶端組件預留一個位置，指向用戶端 bundler 產生的模組參考
 <!-- ![module reference](/module-reference.png) -->
-<img src="/module-reference-dark.png" class="w-[80%] rounded-xl" />
+<img src="/module-reference-dark-2.png" class="w-[80%] rounded-xl" />
 
 ---
 
@@ -1222,6 +1165,15 @@ $$typeof: Symbol.for("react.module.reference")
 </div>
 
 ---
+layout: section
+class: text-center
+---
+
+# Part 4: 
+
+# 伺服器組件的規則
+
+---
 
 # 處理伺服器組件的規則
 
@@ -1248,15 +1200,6 @@ $$typeof: Symbol.for("react.module.reference")
 </div>
 
 </div>
-
----
-layout: section
-class: text-center
----
-
-# Part 4: 
-
-# 伺服器組件的規則
 
 ---
 
@@ -1441,7 +1384,7 @@ export async function removeFromCart(id) {...}
 
 寫法2: 提示 React 和 bundler 這個函式可以從用戶端程式碼呼叫，但**只能在伺服器上執行**
 
-```js
+```js {1-3|all}
 async function requestUsername(formData) {
   'use server';
   const username = formData.get('username');
@@ -1524,61 +1467,9 @@ export default function App() {
    - 框架自動阻止默認提交
    - React 自動將表單的 FormData 作為第一個參數傳給 Server Function
 4. React 自動發送網路請求到伺服器
-   - Server Function 在伺服器上執行
-   - 能夠直接存取後端資源(例如資料庫)
 5. Server Function 執行成功後
    - React 自動重新渲染受影響的伺服器元件樹
    - 在用戶端進行調和
-
----
-
-# 在「JS bundle 還沒載入」時也能提交表單？
-
-<div />
-
-當使用者按下 submit：
-瀏覽器會執行預設的 HTML 表單提交行為，
-直接發送 POST 請求到伺服器，這整個過程不需要瀏覽器端的 JavaScript。
-
-這是一種漸進增強 (Progressive Enhancement)的網頁設計策略
-
-**核心原則**:
-
-1. 確保網頁的基本內容和核心功能能在**所有瀏覽器和設備上**都能良好地展現和使用
-   - 包括最老舊或功能最少的
-
-2. 額外的 CSS、Script、高級功能應被視為**可選的增強**
-   - 即使它們加載失敗或不被支持
-   - 也不會影響網站的基礎可用性
-
-透過 Server Actions，React 可以漸進增強表單
-
-<!--
-React 在伺服器渲染 (SSR) 時，<form> 是伺服器直接渲染出來的 HTML。
-
-被轉換成：
-
-`<form action="/_actions/requestUsername" method="POST">`
-或類似的 URL（具體實現取決於框架，例如 Next.js）。
-
-這種表單是 瀏覽器原生就會運作的。
-當你按下「送出」，瀏覽器會：
-把資料包成 FormData
-送到伺服器
-然後伺服器執行對應的 requestUsername 函式
-最後回傳一個新頁面（或結果）
-👉 這整個流程 不需要任何 JavaScript，純靠 HTML 就能跑。
-就算使用者的網路很慢、React 的 JS bundle 還在載（還沒下載完）完）
-
-
-等瀏覽器把 React 的 JavaScript 載完之後，React 才會「接管」畫面。
-這時候：
-React 會攔截表單的提交；
-改成用 JavaScript（fetch）直接呼叫伺服器；
-不需要整頁重整；
-可以即時更新畫面（像 SPA 那樣）。
-這就叫 漸進式增強 (progressive enhancement)：
--->
 
 ---
 
@@ -1597,7 +1488,7 @@ React 會攔截表單的提交；
 </div>
 <div>
 
-```js {all|6|9-14|18-20}
+```js {all|6-7|8-13|16-20}
 "use client";
 import incrementLike from "./actions";
 import { useState, useTransition } from "react";
@@ -1673,7 +1564,7 @@ function LikeButton() {
 | 所有狀態更新、API 請求、錯誤處理皆在用戶端 | 使用 `'use server'` 標記的資料修改邏輯僅存在伺服器端 | 降低用戶端複雜度 |
 | 手動使用 `useState` / `useEffect` / fetch 並管理 Pending / 成功 / 失敗等多階段狀態 | 可結合 `useTransition` 等 Hook，自動處理 Pending 轉換 | 自動化狀態流程、減少程式 |
 | 提交需透過 `onSubmit + preventDefault()`，手動發送 fetch、序列化 FormData | Server Function 可直接作為 `<form action>`，React 自動傳遞 FormData 並支援 JS 未載入時仍可正常提交 | 原生支援 Progressive Enhancement，降低事件綁定負擔 |
-| 前端需手動呼叫 API;若涉及多層請求，易產生網路瀑布 | 函數呼叫即是請求，Server Function 能直接存取後端，避免中間 API 路徑 | 減少延遲、降低重複傳輸開銷 |
+| 前端需手動呼叫 API; 若涉及多層請求，易產生網路瀑布 | 函數呼叫即是請求，Server Function 能直接存取後端，避免中間 API 路徑 | 減少延遲、降低重複傳輸開銷 |
 | 表單邏輯、錯誤處理、驗證等皆須打包進前端 bundle | Server Function 端邏輯不會傳至前端,實現零額外 bundle 成本 | 明顯減少下載體積、提升初始載入速度 |
 
 </div>
@@ -1686,11 +1577,11 @@ RSC 沒有取代 SSR，而是補充了SSR，需要透過框架來整合，例如
 
 <div class="text-[16px]">
 
-|  | server-side rendering | React Server Components |
+|  | Server-side rendering | React Server Components |
 |---------|----------------|----------|
 | 組件 | 都是 client component | 預設是 server component，需要 Hooks、狀態 (State) 或 瀏覽器 API 的組件要用 'use client ' 標記成用戶端組件 |
 | 序列化產物 | 將所有組件渲染成靜態 HTML 字串 (或串流)，用於首頁快速預覽 | 產生 RSC payload |
-| 程式碼傳輸 | 所有組件的 JS Bundle 都會傳輸到用戶端 | 伺服器端組件的原始碼不會再傳到用戶端，RSC payload 包含了已渲染的 SC 結構結果、以及用戶端組件的模組參考作為 Placeholder |
+| 程式碼傳輸 | 所有組件的 JS Bundle 都會傳輸到用戶端 | 伺服器端組件的原始碼不會再傳到用戶端，RSC payload 包含了已渲染的伺服器組件結構、以及用戶端組件的模組參考作為 Placeholder |
 | 水合 | 所有組件的程式碼都必須在用戶端下載並再次執行，以附加事件監聽器並恢復互動性 | 只有用戶端組件的程式碼會被下載，進行水合以實現互動性 |
 
 </div>
@@ -1699,15 +1590,18 @@ RSC 沒有取代 SSR，而是補充了SSR，需要透過框架來整合，例如
 
 # 章節重點回顧 — Takeaway
 
-1. 伺服器組件（RSCs）把資料抓取與渲染移到伺服器：能減少前端 bundle 體積，並在首次載入就回傳已渲染的 HTML，提升效能與首次可見內容（TTFB/CLS）。
+1. 伺服器組件將資料抓取、邏輯執行、靜態渲染從用戶端移到伺服器：伺服器組件程式碼和依賴項目不會進入 bundle，用戶端只下載互動部分，大幅減少 bundle size，提升用戶體驗。
 
-2. 嚴格區分 Server vs Client：有互動性的邏輯（如 useState、onClick、DOM 操作）必須放在用戶端組件（`"use client"`）；伺服器組件只處理可序列化的資料與靜態輸出。
+2. 序列化：伺服器把 React 元素樹序列化為可傳輸的 JSON 傳到用戶端；用戶端 parse 時還原 Symbol。
 
-3. 序列化與模組參考是關鍵：伺服器會把 React 元素樹序列化送到用戶端（replacer/parse 還原 $$typeof），對於 client component 以模組參考作為佔位，用戶端再載入對應 bundle 注入互動部分。
+3. 區分 Server vs Client 的邊界：有互動性邏輯（如 useState、onClick）必須放在用戶端組件；伺服器組件只處理可序列化的 props 和靜態內容。
 
-4. 軟導航（Soft Navigation）可降低全頁重載：攔截連結並只請求 JSX/元素樹，反序列化後用 root.render 更新畫面，保留應用狀態且更流暢。
 
-5. Server Actions 與安全性：使用 `'use server'` 的伺服器函式讓用戶端能直接觸發伺服器邏輯（表單/資料修改），同時保持敏感資源在伺服器端，減少 client bundle 並利於漸進增強。
+4. 用戶端組件在 Server rendering 時，伺服器用模組參考作為佔位符，告訴用戶端「此處需載入某個 bundle」。
+
+4. 軟導航實現流暢導航：攔截 `<a>` 點擊，只向伺服器請求新頁面的 JSX 樹，用戶端可局部更新改變的組件，其他組件與狀態保持不變。
+
+5. 伺服器操作：在伺服器用 `'use server'` 標記讓用戶端能直接呼叫伺服器函式，適合用於處理表單資料修改邏輯，同時保持敏感資料在伺服器端。
 
 ---
 
