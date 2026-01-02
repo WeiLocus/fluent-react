@@ -81,11 +81,11 @@
     </td>
     <td>Steven</td>
     <td>Ashley</td>
-    <td>Slide</td>
+    <td><a href="https://fluent-react-concurrent.vercel.app/">Slide</a></td>
     <td>Note</td>
   </tr>
   <tr>
-    <td>2025/11/15</td>
+    <td>2025/12/9</td>
     <td>
       第 8 章 框架
     </td>
@@ -95,7 +95,7 @@
     <td>Note</td>
   </tr>
   <tr>
-    <td>2025/12/2</td>
+    <td>2025/12/16</td>
     <td>
       第 9 章 React Server Components<br/>
       第 10 章 React替代方案<br/>
@@ -103,7 +103,7 @@
     </td>
     <td>wei</td>
     <td>kent</td>
-    <td>Slide</td>
+    <td><a href="https://weilocus.github.io/fluent-react/">Slide</a></td>
     <td>Note</td>
   </tr>
 </table>
